@@ -11,6 +11,6 @@ class Question(models.Model):
     pub_date = models.DateTimeField('date published')# pub_dateでは人間に読めないので、新たにデータ名としてdate publishedを設定
 
 class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)# それぞれのChoiceが一つのQuestionに関連している
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)# それぞれのchoiceが一つのquestionと関連づけられている
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
