@@ -6,6 +6,11 @@ from django.db import models
 # Any choice has relationship with an question
 # djangoのモデルとは、データのテーブル作成のようなもの。クラスが表の名前でその中にカテゴリを記述するイメージ
 
+# モデル変更の３ステップ
+# 1. モデルを変更する (models.py の中の)
+# 2. これらの変更のためのマイグレーションを作成するために python manage.py makemigrations を実行します。
+# 3. データベースにこれらの変更を適用するために python manage.py migrate を実行します。
+
 class Question(models.Model):
     question_text = models.CharField(max_length=200)# CharFieldは引数としてmax_legth()が必須
     pub_date = models.DateTimeField('date published')# pub_dateでは人間に読めないので、新たにデータ名としてdate publishedを設定
