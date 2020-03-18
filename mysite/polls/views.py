@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.urls import reverse
+from django.views import generic
+
 from .models import Question, Choice
 
 '''
@@ -16,22 +18,27 @@ from .models import Question, Choice
 '''
 
 
-def index(request):
-    # 最新５つの質問をレスポンスする
-    latest_question_list = Question.objects.order_by('-pub_date')[:5]
-    # コンテキストはテンプレート変数名をPythonオブジェクトにマッピングする辞書
-    context = {'latest_question_list':latest_question_list}
-    # renderをつかうとテンプレートのロードをわざわざしなくてもいい
-    return render(request, 'polls/index.html', context)
+class IndexView(generic.ListView):
+    template_name = 'polls/index.html'
+    context_object_name = 'latest_question_list'
 
-def detail(request, question_id):
-    # Http404の設定(with shortcut)
-    question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'polls/detail.html', {'question':question})
+    def get_queryset(self):
+        """Return the last five published questions."""
+        return Question.objects.order_by('-pub_date')[:5]
 
-def results(request, question_id):
-    question = get_object_or_404(Question, pk=question_id)
-    return render(request, 'polls/results.html', {'question': question})
+# DetailView 汎用ビューには、 "pk" という名前で
+# URL からプライマリキーをキャプチャして渡すことになっているので、
+# 汎用ビュー向けに question_id を pk に変更しています。
+class DetailView(generic.DetailView):
+    #  各汎用ビューは自分がどのモデルに対して動作するのか知っておく必要があるのでmodel=を設定しておく。
+    model = Question
+    # template_name属性の指定をすると、デフォルトではなく、指定したテンプレート名を使うように指定できる。
+    template_name = 'polls/detail.html'
+
+
+class ResultsView(generic.DetailView):
+    model = Question
+    template_name = 'polls/results.html'
 
 def vote(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
