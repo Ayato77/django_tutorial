@@ -1,17 +1,31 @@
 <!--
-テンプレートシステムは、変数の属性にアクセスするためにドット検索の構文を使用します。
-{{ question.question_text }} を例にすると、はじめに Django は question オブジェクトに辞書検索を行います
-それに失敗したら、今度は属性として検索を行い、このケースの場合は成功します。
-もし属性の検索に失敗すると、リストインデックスでの検索を行います。
-
-メソッドの呼び出しは for  ループの中で行われています。
-question.choice_set.all は、 Python コードの question.choice_set.all() と解釈されます。
-その結果、Choice オブジェクトからなるイテレーション可能オブジェクトを返し、 for  タグで使えるようになります。
+上のテンプレートは、各質問の選択肢のラジオボタンが表示するものです。
+各ラジオボタンの value は、関連する質問の選択肢のIDです。
+各ラジオボタンの name は "choice" です。つまり、投票者がラジオボタンの1つを選択し、
+フォームを送信すると、POSTデータ choice=# （＃は選んだ選択肢のID）が送信されます。
+これは、HTMLフォームの基本的な概念です。
+フォームの action を  url 'polls:vote' question.id  に設定し、 さらに method="post" を設定しました。
+method="post" を使用する (method="get" ではなく) ことは非常に重要です。
+なぜなら、フォームの送信はサーバ側のデータの更新につながるからです。
+サーバ側のデータを更新するフォームを作成する場合は、 method="post" を使いましょう。
+これは、 Django 固有のものではなく、いわば Web 開発の王道です。
+forloop.counter は、 for タグのループが何度実行されたかを表す値です。
+POST フォーム(データを改ざんされる恐れのある) を作成しているので、クロス サイトリクエストフォージェリを心配する必要があります。
+ありがたいことに、 Django がこれに対応するとても使いやすい仕組みを提供してくれているので、あまり心配する必要はありません。
+手短に言うと、自サイト内を URL に指定した POST フォームには全て、 {% csrf_token %} テンプレートタグを使うべきです。
 -->
 
 <h1>{{ question.question_text }}</h1>
-<ul>
+
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+
+<!--入力フォームの作成。サーバー側のデータを更新するのでmethod="post"を設定。-->
+<form action="{% url 'polls:vote' question.id %}" method="post">
+{% csrf_token %}<!--全てのpostフォームに必ずcsrfタグをつけること！フォームはデータ改ざんに使われる可能性があるのでセキュリティ対策が必要-->
 {% for choice in question.choice_set.all %}
-    <li>{{ choice.choice_text }}</li>
+    <input type="radio" name="choice" id="choice{{ forloop.counter }}" value="{{ choice.id }}">
+    <!--forloop.counterはforタグのループが何度実行されたかカウント-->
+    <label for="choice{{ forloop.counter }}">{{ choice.choice_text }}</label><br>
 {% endfor %}
-</ul>
+<input type="submit" value="Vote">
+</form><li><a href="{% url 'polls:detail' question.id %}">{{ question.question_text }}</a></li>
