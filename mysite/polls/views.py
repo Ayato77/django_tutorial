@@ -39,6 +39,12 @@ class DetailView(generic.DetailView):
     # template_name属性の指定をすると、デフォルトではなく、指定したテンプレート名を使うように指定できる。
     template_name = 'polls/detail.html'
 
+    def get_queryset(self):
+        '''
+        未来に設定された質問は表示はされなくとも、urlを特定された場合にアクセスできてしまうので、それを防ぐ
+        '''
+        return Question.objects.filter(pub_date__lte=timezone.now())
+
 
 class ResultsView(generic.DetailView):
     model = Question

@@ -89,3 +89,24 @@ class QuestionModelTests(TestCase):
                 response.context['latest_question_list'],
                 ['<Question: Past question 2.>', '<Question: Past question 1.>']
             )
+
+    class QuestionDetailViewTests(TestCase):
+        def test_future_question(self):
+            """
+            The detail view of a question with a pub_date in the future
+            returns a 404 not found. 未来に設定された質問にアクセスすると404が返されることを確認
+            """
+            future_question = create_question(question_text='Future question.', days=5)
+            url = reverse('polls:detail', args=(future_question.id,))
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 404)
+
+        def test_past_question(self):
+            """
+            The detail view of a question with a pub_date in the past
+            displays the question's text.　過去に設定された質問は全て表示できることを確認
+            """
+            past_question = create_question(question_text='Past Question.', days=-5)
+            url = reverse('polls:detail', args=(past_question.id,))
+            response = self.client.get(url)
+            self.assertContains(response, past_question.question_text)
