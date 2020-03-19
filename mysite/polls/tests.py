@@ -6,6 +6,16 @@ from django.urls import reverse
 
 from .models import Question
 
+'''
+djangoオフィシャルが推奨するルール:
+
+モデルやビューごとに TestClass を分割する
+テストしたい条件の集まりのそれぞれに対して、異なるテストメソッドを作る
+テストメソッドの名前は、その機能を説明するようなものにする
+
+また、さらにテストツールがあるので、そちらも使うことも推奨されている
+'''
+
 # Create your tests here.
 # was_published_recently()のエラーをテストで検知する
 
