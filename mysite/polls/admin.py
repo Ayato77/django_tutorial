@@ -17,6 +17,8 @@ class QuestionAdmin(admin.ModelAdmin):
     ]
     inlines = [ChoiceInline]
 
+    #各フィールドの値を表示させるにはlist_displayを設定する
+    list_display = ('question_text', 'pub_date', 'was_published_recently')
 '''
 adminのオプションを変更したいときは、モデルごとにadminクラスを作成して、admin.site.register()の２番目の引数に渡す
 '''
