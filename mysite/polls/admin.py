@@ -19,6 +19,10 @@ class QuestionAdmin(admin.ModelAdmin):
 
     #各フィールドの値を表示させるにはlist_displayを設定する
     list_display = ('question_text', 'pub_date', 'was_published_recently')
+    # フィルターをadminページで表示
+    list_filter = ['pub_date']
+    # 検索機能の追加
+    search_fields = ['question_text']
 '''
 adminのオプションを変更したいときは、モデルごとにadminクラスを作成して、admin.site.register()の２番目の引数に渡す
 '''
